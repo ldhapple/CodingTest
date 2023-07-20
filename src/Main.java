@@ -1,3 +1,5 @@
+import java.io.BufferedWriter;
+import java.io.OutputStreamWriter;
 import java.math.BigInteger;
 import java.util.*;
 import java.io.BufferedReader;
@@ -5,56 +7,44 @@ import java.io.InputStreamReader;
 
 public class Main {
 
-    static final int INF = 987654321;
+    static Node root = new Node();
+    static class Node{
+        HashMap<String, Node> child;
+        public Node(){
+            child = new HashMap<>();
+        }
+    }
+    static StringBuilder sb = new StringBuilder();
     public static void main(String[] args) throws Exception {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st;
-        StringBuilder sb = new StringBuilder();
 
-        st = new StringTokenizer(br.readLine());
+        int N = Integer.parseInt(br.readLine());
 
-        int V = Integer.parseInt(st.nextToken());
-        int E = Integer.parseInt(st.nextToken());
-
-        int[][] arr = new int[V+1][V+1];
-
-        for(int i = 1; i <= V; i++){
-            for(int j = 1; j <= V; j++){
-                if(i == j) arr[i][j] = 0;
-                else arr[i][j] = INF;
-            }
-        }
-
-        for(int i = 0; i < E; i++){
+        for(int i=0;i<N;i++){
             st = new StringTokenizer(br.readLine());
-            int u = Integer.parseInt(st.nextToken());
-            int v = Integer.parseInt(st.nextToken());
-            int d = Integer.parseInt(st.nextToken());
-
-            arr[u][v] = d;
-        }
-
-        for(int k = 1; k <= V; k++){
-            for(int i = 1; i <= V; i++){
-                for(int j = 1; j <= V; j++){
-                    if(arr[i][j] > arr[i][k] + arr[k][j]){
-                        arr[i][j] = arr[i][k] + arr[k][j];
-                    }
+            int K = Integer.parseInt(st.nextToken());
+            Node cur = root;
+            for(int j=0;j<K;j++){
+                String temp = st.nextToken();
+                if(!cur.child.containsKey(temp)){
+                    cur.child.put(temp, new Node());
                 }
+                cur = cur.child.get(temp);
             }
         }
+        print(root, "");
+        System.out.print(sb);
+    }
 
-        int min = Integer.MAX_VALUE;
-        for(int i = 1; i <= V; i++){
-            for(int j = 1; j <= V; j++){
-                if(i == j) continue;
-
-                if(arr[i][j] != INF && arr[j][i] != INF){
-                    min = Math.min(min, arr[i][j] + arr[j][i]);
-                }
-            }
+    static void print(Node cur, String s){
+        //현재 방에 자식 구조 가져오기
+        ArrayList<String> list = new ArrayList<>(cur.child.keySet());
+        Collections.sort(list);		//사전 순 정렬
+        //정렬 이후 사전 순으로 표시 후 탐색
+        for(String str : list){
+            sb.append(s).append(str).append("\n");
+            print(cur.child.get(str), s +"--");
         }
-        if(min == Integer.MAX_VALUE) min = -1;
-        System.out.print(min);
     }
 }
