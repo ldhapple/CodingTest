@@ -1,89 +1,66 @@
+import java.awt.*;
 import java.io.BufferedWriter;
 import java.io.OutputStreamWriter;
 import java.math.BigInteger;
+import java.security.cert.CollectionCertStoreParameters;
 import java.util.*;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
 public class Main {
-
     static StringBuilder sb = new StringBuilder();
     static StringTokenizer st;
-    static int[][] table;
+    static int[][] arr;
 
+    static int row_idx;
+    static int col_idx;
     public static void main(String[] args) throws Exception {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-        table = new int[9][9];
+        int N = Integer.parseInt(br.readLine());
 
-        for(int i = 0; i < 9; i++){
+        arr = new int[N][N];
+
+        for(int i = 0; i < N; i++){
             st = new StringTokenizer(br.readLine());
-            for(int j = 0; j < 9; j++){
-                int next = Integer.parseInt(st.nextToken());
-                table[i][j] = next;
+            for(int j = 0; j < N; j++){
+                arr[i][j] = Integer.parseInt(st.nextToken());
             }
         }
 
-        sudoku(0, 0);
+        search(N);
+        System.out.print(arr[0][0]);
 
     }
 
-    public static void sudoku(int row, int col){
-        if(col == 9){
-            sudoku(row + 1, 0);
-            return;
-        }
+    public static void checkNum(int row, int col){
+        ArrayList<Integer> checkSecond = new ArrayList<>();
 
-        if(row == 9){
-            for(int i = 0; i < 9; i++){
-                for(int j = 0; j < 9; j++){
-                    sb.append(table[i][j]).append(" ");
-                }
-                sb.append("\n");
+        for(int i = row; i < row+2; i++){
+            for(int j = col; j < col+2; j++){
+                checkSecond.add(arr[i][j]);
             }
-            System.out.print(sb);
-            System.exit(0);
         }
 
-        if(table[row][col] == 0){
-            for(int i = 1; i <= 9; i++){
-                if(possibility(row, col, i)){
-                    table[row][col] = i;
-                    sudoku(row, col + 1);
-                }
-            }
-            table[row][col] = 0;
-            return;
-        }
-
-        sudoku(row, col + 1);
+        Collections.sort(checkSecond);
+        arr[row_idx][col_idx] = checkSecond.get(2);
     }
 
-    public static boolean possibility(int row, int col, int value){
-        for(int i = 0; i < 9; i++){
-            if(table[row][i] == value){
-                return false;
+    public static void search(int N){
+        if(N == 1) return;
+
+        row_idx = 0;
+        col_idx = 0;
+
+        for(int i = 0; i < N; i+=2){
+            for(int j = 0; j < N; j+=2){
+                checkNum(i,j);
+                col_idx++;
             }
+            row_idx++;
+            col_idx = 0;
         }
 
-        for(int i = 0; i < 9; i++){
-            if(table[i][col] == value){
-                return false;
-            }
-        }
-
-        int ract_row = (row/3) * 3;
-        int ract_col = (col/3) * 3;
-
-        for(int i = ract_row; i < ract_row + 3; i++){
-            for(int j = ract_col; j < ract_col + 3; j++){
-                if(table[i][j] == value){
-                    return false;
-                }
-            }
-        }
-
-        return true;
+        search(N/2);
     }
-
 }
