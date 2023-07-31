@@ -10,57 +10,71 @@ import java.io.InputStreamReader;
 public class Main {
     static StringBuilder sb = new StringBuilder();
     static StringTokenizer st;
-    static int[][] arr;
 
-    static int row_idx;
-    static int col_idx;
+    static int[] dx = {-1,-1,0,1,1,1,0,-1};
+    static int[] dy = {0,1,1,1,0,-1,-1,-1};
+    static int N, M, K, MAX_LENGTH;
+    static Map<String, Integer> map = new HashMap<>();
+    static char[][] arr;
+
     public static void main(String[] args) throws Exception {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-        int N = Integer.parseInt(br.readLine());
+        st = new StringTokenizer(br.readLine());
 
-        arr = new int[N][N];
+        N = Integer.parseInt(st.nextToken());
+        M = Integer.parseInt(st.nextToken());
+
+        K = Integer.parseInt(st.nextToken());
+
+        arr = new char[N][M];
+        MAX_LENGTH = 5;
 
         for(int i = 0; i < N; i++){
-            st = new StringTokenizer(br.readLine());
-            for(int j = 0; j < N; j++){
-                arr[i][j] = Integer.parseInt(st.nextToken());
+            arr[i] = br.readLine().toCharArray();
+        }
+
+        String[] string_arr = new String[K];
+
+        for(int i = 0; i < K; i++){
+            String favoriteString = br.readLine();
+            //MAX_LENGTH = Math.max(MAX_LENGTH, favoriteString.length());
+
+            map.put(favoriteString, 0);
+            string_arr[i] = favoriteString;
+        }
+
+        for(int i = 0; i < N; i++){
+            for(int j = 0; j < M; j++){
+                dfs(i,j,1, Character.toString(arr[i][j]));
             }
         }
 
-        search(N);
-        System.out.print(arr[0][0]);
+        for(String key : string_arr){
+            sb.append(map.get(key)).append("\n");
+        }
 
+        System.out.print(sb);
     }
 
-    public static void checkNum(int row, int col){
-        ArrayList<Integer> checkSecond = new ArrayList<>();
-
-        for(int i = row; i < row+2; i++){
-            for(int j = col; j < col+2; j++){
-                checkSecond.add(arr[i][j]);
-            }
+    public static void dfs(int x, int y, int depth, String result){
+        if(map.containsKey(result)){
+            map.put(result, map.get(result) + 1);
         }
 
-        Collections.sort(checkSecond);
-        arr[row_idx][col_idx] = checkSecond.get(2);
-    }
+        if(depth == MAX_LENGTH) return;
 
-    public static void search(int N){
-        if(N == 1) return;
+        for(int i = 0; i < dx.length; i++){
+            int nx = x + dx[i];
+            int ny = y + dy[i];
 
-        row_idx = 0;
-        col_idx = 0;
+            if(nx < 0) nx = N-1;
+            else if(nx >= N) nx = 0;
 
-        for(int i = 0; i < N; i+=2){
-            for(int j = 0; j < N; j+=2){
-                checkNum(i,j);
-                col_idx++;
-            }
-            row_idx++;
-            col_idx = 0;
+            if(ny < 0) ny = M-1;
+            else if(ny >= M) ny = 0;
+
+            dfs(nx,ny,depth+1,result + arr[nx][ny]);
         }
-
-        search(N/2);
     }
 }
