@@ -48,23 +48,17 @@ public class Main {
     }
 
     public static int maxItem(int lendingPoint, int[][] edges, int[] items, int maxRange){
-        boolean[] isVisited = new boolean[items.length];
         int item_sum = items[lendingPoint];
 
-
-
-        PriorityQueue<int[]> q = new PriorityQueue<>();
+        PriorityQueue<int[]> q = new PriorityQueue<>((a,b) -> a[1] - b[1]);
         q.offer(new int[] {lendingPoint, 0});
-        isVisited[lendingPoint] = true;
 
         while (!q.isEmpty()) {
             int[] point = q.poll();
 
             for (int i = 0; i < edges[point[0]].length; i++) {
-                if (isVisited[i]) continue;
-                if (edges[point[0]][i] != 0 && edges[point[0]][i] <= maxRange - point[1]) {
+                if (maxRange - (point[1] + edges[point[0]][i]) >= 0) {
                     item_sum += items[i];
-                    isVisited[i] = true;
                     q.offer(new int[] {i, point[1] + edges[point[0]][i]});
                 }
             }
