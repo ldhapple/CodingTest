@@ -12,48 +12,64 @@ public class Main {
     public static void main(String[] args) throws Exception {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-        int T = Integer.parseInt(br.readLine());
+        st = new StringTokenizer(br.readLine());
 
-        for (int i = 0; i < T; i++) {
+        int N = Integer.parseInt(st.nextToken()); // 지역의 수
+        int M = Integer.parseInt(st.nextToken()); // 수색범위
+        int R = Integer.parseInt(st.nextToken()); // 길의 수
 
-            String str = br.readLine();
-            int K = Integer.parseInt(br.readLine());
+        st = new StringTokenizer(br.readLine());
 
-            int[] alp_table = new int[26];
+        int[] items = new int[N];
 
-            if(K == 1){
-                System.out.println("1 1");
-                continue;
-            }
-
-            for (int j = 0; j < str.length(); j++) {
-                alp_table[str.charAt(j) - 'a']++;
-            }
-
-            int min = Integer.MAX_VALUE;
-            int max = -1;
-
-            for (int j = 0; j < str.length(); j++) {
-                if (alp_table[str.charAt(j) - 'a'] < K) {
-                    continue;
-                }
-
-                int count = 1;
-                for (int l = j+1; l < str.length(); l++) {
-                    if (str.charAt(j) == str.charAt(l)) {
-                        count++;
-                    }
-
-                    if (count == K) {
-                        min = Math.min(min, l - j + 1);
-                        max = Math.max(max, l - j + 1);
-                        break;
-                    }
-                }
-            }
-
-            if (min == Integer.MAX_VALUE || max == -1) System.out.println(-1);
-            else System.out.println(min + " " + max);
+        for (int i = 0; i < N; i++) {
+            items[i] = Integer.parseInt(st.nextToken());
         }
+
+        int[][] edges = new int[N][N];
+
+        for (int i = 0; i < R; i++) {
+            st = new StringTokenizer(br.readLine());
+
+            int A = Integer.parseInt(st.nextToken()) - 1;
+            int B = Integer.parseInt(st.nextToken()) - 1;
+            int D = Integer.parseInt(st.nextToken());
+
+            edges[A][B] = D;
+            edges[B][A] = D;
+        }
+
+        int max = -1;
+        for (int i = 0; i < N; i++) {
+            max = Math.max(max, maxItem(i, edges, items, M));
+        }
+
+        System.out.print(max);
+    }
+
+    public static int maxItem(int lendingPoint, int[][] edges, int[] items, int maxRange){
+        boolean[] isVisited = new boolean[items.length];
+        int item_sum = items[lendingPoint];
+
+
+
+        PriorityQueue<int[]> q = new PriorityQueue<>();
+        q.offer(new int[] {lendingPoint, 0});
+        isVisited[lendingPoint] = true;
+
+        while (!q.isEmpty()) {
+            int[] point = q.poll();
+
+            for (int i = 0; i < edges[point[0]].length; i++) {
+                if (isVisited[i]) continue;
+                if (edges[point[0]][i] != 0 && edges[point[0]][i] <= maxRange - point[1]) {
+                    item_sum += items[i];
+                    isVisited[i] = true;
+                    q.offer(new int[] {i, point[1] + edges[point[0]][i]});
+                }
+            }
+        }
+
+        return item_sum;
     }
 }
