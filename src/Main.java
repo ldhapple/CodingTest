@@ -14,56 +14,62 @@ public class Main {
 
         st = new StringTokenizer(br.readLine());
 
-        int N = Integer.parseInt(st.nextToken()); // 지역의 수
-        int M = Integer.parseInt(st.nextToken()); // 수색범위
-        int R = Integer.parseInt(st.nextToken()); // 길의 수
+        int N = Integer.parseInt(st.nextToken());
+        int M = Integer.parseInt(st.nextToken());
+
+        int[] arr = new int[N];
 
         st = new StringTokenizer(br.readLine());
-
-        int[] items = new int[N];
-
         for (int i = 0; i < N; i++) {
-            items[i] = Integer.parseInt(st.nextToken());
+            arr[i] = Integer.parseInt(st.nextToken());
         }
 
-        int[][] edges = new int[N][N];
-
-        for (int i = 0; i < R; i++) {
+        for (int i = 0; i < M; i++) {
             st = new StringTokenizer(br.readLine());
 
-            int A = Integer.parseInt(st.nextToken()) - 1;
-            int B = Integer.parseInt(st.nextToken()) - 1;
-            int D = Integer.parseInt(st.nextToken());
+            int order = Integer.parseInt(st.nextToken());
+            int start = 0;
+            int end = 0;
 
-            edges[A][B] = D;
-            edges[B][A] = D;
-        }
+            switch (order) {
+                case 1:
+                    int num = Integer.parseInt(st.nextToken()) - 1;
+                    arr[num] = Integer.parseInt(st.nextToken());
+                    break;
 
-        int max = -1;
-        for (int i = 0; i < N; i++) {
-            max = Math.max(max, maxItem(i, edges, items, M));
-        }
+                case 2:
+                    start = Integer.parseInt(st.nextToken()) - 1;
+                    end = Integer.parseInt(st.nextToken()) - 1;
+                    for (int k = start; k <= end; k++) {
+                        if (arr[k] == 0) arr[k] = 1;
+                        else arr[k] = 0;
+                    }
+                    break;
 
-        System.out.print(max);
-    }
+                case 3:
+                    start = Integer.parseInt(st.nextToken()) - 1;
+                    end = Integer.parseInt(st.nextToken()) - 1;
+                    for (int k = start; k <= end; k++) {
+                        if (arr[k] == 0) continue;
+                        arr[k] = 0;
+                    }
+                    break;
 
-    public static int maxItem(int lendingPoint, int[][] edges, int[] items, int maxRange){
-        int item_sum = items[lendingPoint];
-
-        PriorityQueue<int[]> q = new PriorityQueue<>((a,b) -> a[1] - b[1]);
-        q.offer(new int[] {lendingPoint, 0});
-
-        while (!q.isEmpty()) {
-            int[] point = q.poll();
-
-            for (int i = 0; i < edges[point[0]].length; i++) {
-                if (maxRange - (point[1] + edges[point[0]][i]) >= 0) {
-                    item_sum += items[i];
-                    q.offer(new int[] {i, point[1] + edges[point[0]][i]});
-                }
+                case 4:
+                    start = Integer.parseInt(st.nextToken()) - 1;
+                    end = Integer.parseInt(st.nextToken()) - 1;
+                    for (int k = start; k <= end; k++) {
+                        if (arr[k] == 1) continue;
+                        arr[k] = 1;
+                    }
+                    break;
             }
         }
 
-        return item_sum;
+        for (int i : arr) {
+            sb.append(i + " ");
+        }
+
+        System.out.print(sb);
     }
 }
