@@ -15,6 +15,23 @@ public class Main {
 
         int N = Integer.parseInt(br.readLine());
 
-        System.out.println(N%2 == 0 ? "CY" : "SK");
+        int[] dp = new int[N+1];
+        dp[1] = 1;
+
+        int min = 0;
+        for (int i = 2; i <= N; i++) {
+            min = Integer.MAX_VALUE;
+
+            for (int j = 1; j * j <= i; j++) {
+                int temp = i - j * j;
+                min = Math.min(min, dp[temp]);
+            }
+
+            dp[i] = min + 1;
+            //i에서 어떤 제곱수를 빼면 dp[temp]가 나오고 그 제곱수를 다시 더하면 i이므로
+            //1을 다시 더해주어야 함.
+        }
+
+        System.out.print(dp[N]);
     }
 }
