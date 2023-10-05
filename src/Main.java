@@ -15,24 +15,25 @@ public class Main {
 
         int N = Integer.parseInt(br.readLine());
 
-        int[] dp = new int[N + 1];
+        st = new StringTokenizer(br.readLine());
 
-        for (int i = 2; i <= N; i++) {
-            int min = Integer.MAX_VALUE;
+        int[] arr = new int[N];
 
-            if (i % 3 == 0) {
-                min = Math.min(min, dp[i/3]);
-            }
-
-            if (i % 2 == 0) {
-                min = Math.min(min, dp[i/2]);
-            }
-
-            min = Math.min(min, dp[i-1]);
-
-            dp[i] = min + 1;
+        for (int i = 0; i < N; i++) {
+            arr[i] = Integer.parseInt(st.nextToken());
         }
 
-        System.out.print(dp[N]);
+        int[] dp = new int[N];
+        dp[0] = arr[0];
+
+        for (int i = 1; i < N; i++) {
+            dp[i] = Math.max(dp[i-1] + arr[i], arr[i]);
+            // index 'i' 까지의 연속합이 arr[i]보다 작다면 연속합의 시작점을 arr[i]로 초기화
+            // arr[i]보다 연속합이 작다면 뒤에 어떤 수를 더 합해도 더 커질 수 없기 때문.
+        }
+
+
+
+        System.out.println(Arrays.stream(dp).max().getAsInt());
     }
 }
