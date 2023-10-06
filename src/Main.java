@@ -14,26 +14,51 @@ public class Main {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
         int N = Integer.parseInt(br.readLine());
-
-        st = new StringTokenizer(br.readLine());
-
-        int[] arr = new int[N];
+        int[][] table = new int[N][N];
 
         for (int i = 0; i < N; i++) {
-            arr[i] = Integer.parseInt(st.nextToken());
+            st = new StringTokenizer(br.readLine());
+            for (int j = 0; j < N; j++) {
+                table[i][j] = Integer.parseInt(st.nextToken());
+            }
         }
 
-        int[] dp = new int[N];
-        dp[0] = arr[0];
-
-        for (int i = 1; i < N; i++) {
-            dp[i] = Math.max(dp[i-1] + arr[i], arr[i]);
-            // index 'i' 까지의 연속합이 arr[i]보다 작다면 연속합의 시작점을 arr[i]로 초기화
-            // arr[i]보다 연속합이 작다면 뒤에 어떤 수를 더 합해도 더 커질 수 없기 때문.
+        long[][] dp = new long[N][N];
+        for (int i = 0; i < N; i++) {
+            Arrays.fill(dp[i], -1);
         }
 
+        System.out.print(dfs(0,0, table, dp));
+    }
 
+    public static long dfs(int x, int y, int[][] table, long[][] dp) {
+        int size = table.length - 1;
 
-        System.out.println(Arrays.stream(dp).max().getAsInt());
+        if (dp[x][y] != -1) {
+            return dp[x][y];
+        }
+
+        if (x == size && y == size) {
+            return 1;
+        }
+
+        dp[x][y] = 0;
+
+        int dx = x + table[x][y];
+        int dy = y + table[x][y];
+
+        if (dx >= size && dy >= size) {
+            return 0;
+        }
+
+        if (dx < size) {
+            dp[x][y] = Math.max(dp[x][y], dp[x][y] + dfs(x + table[x][y], y, table, dp));
+        }
+
+        if (dy < size) {
+            dp[x][y] = Math.max(dp[x][y], dp[x][y] + dfs(x, y + table[x][y], table, dp));
+        }
+
+        return dp[x][y];
     }
 }
