@@ -10,54 +10,50 @@ public class Main {
     static StringBuilder sb = new StringBuilder();
     static StringTokenizer st;
 
-    static Long[][] dp;
+    static class Stone {
+        int s_jump;
+        int b_jump;
+
+        public Stone(int s_jump, int b_jump) {
+            this.s_jump = s_jump;
+            this.b_jump = b_jump;
+        }
+    }
     public static void main(String[] args) throws Exception {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
         int N = Integer.parseInt(br.readLine());
 
-        dp = new Long[N + 1][10];
+        Stone[] stones = new Stone[N-1];
 
-        for (int i = 0; i < 10; i++) {
-            //첫번째 자리 수는 다음 자리수가 없으므로 경우의 수가 1가지 뿐이다.
-            dp[1][i] = 1L;
+        for (int i = 0; i < N-1; i++) {
+            st = new StringTokenizer(br.readLine());
+            int s = Integer.parseInt(st.nextToken());
+            int b = Integer.parseInt(st.nextToken());
+
+            stones[i] = new Stone(s, b);
         }
 
-        long result = 0;
+        int k = Integer.parseInt(br.readLine());
 
-        for (int i = 1; i <= 9; i++) {
-            result += recur(N, i);
-            //dp[N][i] 는 N자리 수가 i인 수.
+        int[][] dp = new int[N][2];
+
+        for (int i = 0; i < dp.length; i++) {
+            Arrays.fill(dp[i], 10000);
         }
 
-        System.out.print(result % 1000000000);
-    }
+        dp[0][0] = 0;
+        dp[0][1] = 0;
+        dp[1][0] = stones[0].s_jump;
+        dp[1][1] = 0;
+        dp[2][0] = stones[0].b_jump;
+        dp[3][0] = Math.min(dp[2][0] + stones[0].b_jump, dp[0][0] + stones[1].s_jump);
 
-    static long recur(int digit, int val) {
-
-        // digit = 자릿수, 654323 이라면 6자리수이고, 6번째 자리수는 6, digit이 1인 수는 3.
-        // 첫째 자리수에 도착하면 탐색할 필요 없음.
-        if (digit == 1) {
-            return dp[digit][val];
+        for (int i = 4; i < N; i++) {
+            dp[i][0] = Math.min(dp[i-2][0] + stones[i-2].b_jump, dp[i-1][0] + stones[i-1].s_jump);
+            dp[i][1] = Math.min(Math.min(dp[i-1][1] + stones[i-1].s_jump, dp[i-2][1] + stones[i-2].b_jump), dp[i-3][0] + k);
         }
 
-        if (dp[digit][val] == null) {
-            if (val == 0) {
-                //0인 경우 다음 자리 수는 무조건 1이 와야 함.
-                dp[digit][val] = recur(digit-1, 1);
-            } else if (val == 9) {
-                //9인 경우 다음 자리수는 무조건 8이 와야 함.
-                dp[digit][val] = recur(digit-1, 8);
-            } else {
-                /**
-                 * N==2라고 해보자.
-                 * 2x 인 수 중에 계단 수 이기 위해서는 1 or 3이 와야 한다.
-                 * N==3 에서 digit이 2로 온다고 하면, 3xx -> 3 + (2 or 1) + (1,3 or 0) 이런 흐름.
-                 */
-                dp[digit][val] = recur(digit-1, val-1) + recur(digit-1, val+1);
-            }
-        }
-
-        return dp[digit][val] % 1000000000;
+        System.out.print(Math.min(dp[N-1][0], dp[N-1][1]));
     }
 }
