@@ -10,50 +10,49 @@ public class Main {
     static StringBuilder sb = new StringBuilder();
     static StringTokenizer st;
 
-    static class Stone {
-        int s_jump;
-        int b_jump;
-
-        public Stone(int s_jump, int b_jump) {
-            this.s_jump = s_jump;
-            this.b_jump = b_jump;
-        }
-    }
     public static void main(String[] args) throws Exception {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-        int N = Integer.parseInt(br.readLine());
+        st = new StringTokenizer(br.readLine());
 
-        Stone[] stones = new Stone[N-1];
+        int N = Integer.parseInt(st.nextToken()); //돌의 개수
+        int K = Integer.parseInt(st.nextToken()); //최대 힘
 
-        for (int i = 0; i < N-1; i++) {
-            st = new StringTokenizer(br.readLine());
-            int s = Integer.parseInt(st.nextToken());
-            int b = Integer.parseInt(st.nextToken());
+        int[] arr = new int[N];
 
-            stones[i] = new Stone(s, b);
+        st = new StringTokenizer(br.readLine());
+        for (int i = 0; i < N; i++) {
+            arr[i] = Integer.parseInt(st.nextToken());
         }
 
-        int k = Integer.parseInt(br.readLine());
+        int[] dp = new int[N];
+        Arrays.fill(dp, 1001);
 
-        int[][] dp = new int[N][2];
+        dp[0] = 0;
 
-        for (int i = 0; i < dp.length; i++) {
-            Arrays.fill(dp[i], 10000);
+        for (int i = 1; i < N; i++) {
+            boolean flag = false;
+            for (int j = 0; j < i; j++) {
+                int power = power(j, i, arr);
+
+                if (power <= K && dp[j] != -1) {
+                    flag = true;
+                    dp[i] = Math.min(dp[i], dp[j] + power);
+                }
+            }
+            if (!flag) {
+                dp[i] = -1;
+            }
         }
 
-        dp[0][0] = 0;
-        dp[0][1] = 0;
-        dp[1][0] = stones[0].s_jump;
-        dp[1][1] = 0;
-        dp[2][0] = stones[0].b_jump;
-        dp[3][0] = Math.min(dp[2][0] + stones[0].b_jump, dp[0][0] + stones[1].s_jump);
-
-        for (int i = 4; i < N; i++) {
-            dp[i][0] = Math.min(dp[i-2][0] + stones[i-2].b_jump, dp[i-1][0] + stones[i-1].s_jump);
-            dp[i][1] = Math.min(Math.min(dp[i-1][1] + stones[i-1].s_jump, dp[i-2][1] + stones[i-2].b_jump), dp[i-3][0] + k);
+        if (dp[N-1] != -1) {
+            System.out.print("YES");
+        } else {
+            System.out.print("NO");
         }
+    }
 
-        System.out.print(Math.min(dp[N-1][0], dp[N-1][1]));
+    public static int power(int start, int fin, int[] arr) {
+        return (fin - start) * (1 + Math.abs(arr[start] - arr[fin]));
     }
 }
