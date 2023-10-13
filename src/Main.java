@@ -12,33 +12,38 @@ public class Main {
     public static void main(String[] args) throws Exception {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
+        int N = Integer.parseInt(br.readLine());
+
+        int[] arr = new int[N];
+
         st = new StringTokenizer(br.readLine());
-
-        int N = Integer.parseInt(st.nextToken());
-        int K = Integer.parseInt(st.nextToken());
-
-
-        /**
-         * dp[1] = 1이 K개의 숫자 합으로 만들어지는 개수
-         * 숫자의 중복이 가능하다.
-         * N이 1이고, K가 2라면
-         * 0부터이기 떄문에 (0,1), (1,0) 2가지의 경우가 있다.
-         */
-
-        int[][] dp = new int[K + 1][N + 1];
-        Arrays.fill(dp[1], 1);
-
-        for (int i = 1; i <= K; i++) {
-            dp[i][0] = 1;
+        for (int i = 0; i < N; i++) {
+            arr[i] = Integer.parseInt(st.nextToken());
         }
 
-        for (int i = 2; i <= K; i++) {
-            for (int j = 1; j <= N; j++) {
-                dp[i][j] = dp[i-1][j] + dp[i][j-1];
-                dp[i][j] %= 1000000000;
+        long[][] dp = new long[N-1][21];
+        dp[0][arr[0]] = 1; //첫 숫자 처리.
+
+        /**
+         * dp[{1}][{2}] 에서
+         * {1}은 사용한 숫자의 개수
+         * {2}는 {1} 개수의 숫자 연산으로 0~20까지의 경우의 수
+         * -를 넣은 경우와
+         * +를 넣은 경우를 if문으로 나누어 각 dp배열에 더해준다.
+         */
+
+        for (int i = 1; i < N - 1; i++) {
+            for (int num = 0; num <= 20; num++) {
+                if (num - arr[i] >= 0) {
+                    dp[i][num] += dp[i-1][num-arr[i]];
+                }
+
+                if (num+arr[i] <= 20) {
+                    dp[i][num] += dp[i-1][num+arr[i]];
+                }
             }
         }
 
-        System.out.print(dp[K][N]);
+        System.out.print(dp[N-2][arr[N-1]]);
     }
 }
