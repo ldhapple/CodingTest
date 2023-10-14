@@ -9,41 +9,44 @@ public class Main {
     static StringBuilder sb = new StringBuilder();
     static StringTokenizer st;
 
+    static class Coin {
+        int value;
+        int cnt;
+
+        public Coin(int value, int cnt) {
+            this.value = value;
+            this.cnt = cnt;
+        }
+    }
     public static void main(String[] args) throws Exception {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-        int N = Integer.parseInt(br.readLine());
+        int T = Integer.parseInt(br.readLine()); //지폐의 금액
+        int K = Integer.parseInt(br.readLine()); //동전의 가지 수
+        int[][] dp = new int[K+1][T+1];
 
-        int[] arr = new int[N];
+        ArrayList<Coin> coins = new ArrayList<>();
+        coins.add(new Coin(0,0));
+        for (int i = 1; i <= K; i++) {
+            dp[i-1][0] = 1; //0을 만드는 개수 1로 초기화
 
-        st = new StringTokenizer(br.readLine());
-        for (int i = 0; i < N; i++) {
-            arr[i] = Integer.parseInt(st.nextToken());
+            st = new StringTokenizer(br.readLine());
+
+            int p = Integer.parseInt(st.nextToken()); //금액
+            int n = Integer.parseInt(st.nextToken()); //개수
+
+            coins.add(new Coin(p, n));
         }
 
-        long[][] dp = new long[N-1][21];
-        dp[0][arr[0]] = 1; //첫 숫자 처리.
-
-        /**
-         * dp[{1}][{2}] 에서
-         * {1}은 사용한 숫자의 개수
-         * {2}는 {1} 개수의 숫자 연산으로 0~20까지의 경우의 수
-         * -를 넣은 경우와
-         * +를 넣은 경우를 if문으로 나누어 각 dp배열에 더해준다.
-         */
-
-        for (int i = 1; i < N - 1; i++) {
-            for (int num = 0; num <= 20; num++) {
-                if (num - arr[i] >= 0) {
-                    dp[i][num] += dp[i-1][num-arr[i]];
-                }
-
-                if (num+arr[i] <= 20) {
-                    dp[i][num] += dp[i-1][num+arr[i]];
+        for (int i = 1; i <= K; i++) {
+            Coin coin = coins.get(i);
+            for (int j = 1; j <= T; j++) {
+                for(int m = 0; m <= coin.cnt && m*coin.value <= j; m++) {
+                    dp[i][j] += dp[i-1][j - m*coin.value];
                 }
             }
         }
 
-        System.out.print(dp[N-2][arr[N-1]]);
+        System.out.print(dp[K][T]);
     }
 }
