@@ -9,44 +9,36 @@ public class Main {
     static StringBuilder sb = new StringBuilder();
     static StringTokenizer st;
 
-    static class Coin {
-        int value;
-        int cnt;
-
-        public Coin(int value, int cnt) {
-            this.value = value;
-            this.cnt = cnt;
-        }
-    }
     public static void main(String[] args) throws Exception {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-        int T = Integer.parseInt(br.readLine()); //지폐의 금액
-        int K = Integer.parseInt(br.readLine()); //동전의 가지 수
-        int[][] dp = new int[K+1][T+1];
+        int T = Integer.parseInt(br.readLine());
 
-        ArrayList<Coin> coins = new ArrayList<>();
-        coins.add(new Coin(0,0));
-        for (int i = 1; i <= K; i++) {
-            dp[i-1][0] = 1; //0을 만드는 개수 1로 초기화
+        for (int t = 0; t < T; t++) {
+            int N = Integer.parseInt(br.readLine()); //동전의 가지 수
+
+            int[] coins = new int[N + 1];
+            long[][] dp = new long[N+1][10001];
 
             st = new StringTokenizer(br.readLine());
+            for (int i = 1; i <= N; i++) {
+                coins[i] = Integer.parseInt(st.nextToken());
+                dp[i][coins[i]] += 1;
+            }
 
-            int p = Integer.parseInt(st.nextToken()); //금액
-            int n = Integer.parseInt(st.nextToken()); //개수
+            int target = Integer.parseInt(br.readLine()); //목표 금액
 
-            coins.add(new Coin(p, n));
-        }
-
-        for (int i = 1; i <= K; i++) {
-            Coin coin = coins.get(i);
-            for (int j = 1; j <= T; j++) {
-                for(int m = 0; m <= coin.cnt && m*coin.value <= j; m++) {
-                    dp[i][j] += dp[i-1][j - m*coin.value];
+            for (int i = 1; i <= N; i++) {
+                for (int j = 1; j <= target; j++) {
+                    if (j - coins[i] < 0) {
+                        dp[i][j] = dp[i-1][j];
+                        continue;
+                    }
+                    dp[i][j] += dp[i-1][j] + dp[i][j - coins[i]];
                 }
             }
-        }
 
-        System.out.print(dp[K][T]);
+            System.out.println(dp[N][target]);
+        }
     }
 }
