@@ -9,47 +9,45 @@ public class Main {
     static StringBuilder sb = new StringBuilder();
     static StringTokenizer st;
 
-    static class Subject {
-        int hour;
-        int score;
 
-        public Subject(int hour, int score) {
-            this.hour = hour;
-            this.score = score;
-        }
-    }
 
     public static void main(String[] args) throws Exception {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-        st = new StringTokenizer(br.readLine());
+        String S = br.readLine();
+        String T = br.readLine();
 
-        int N = Integer.parseInt(st.nextToken()); //단원의 수
-        int T = Integer.parseInt(st.nextToken()); //공부할 수 있는 시간
+        if (solve(S, T)) {
+            System.out.print(1);
+        } else {
+            System.out.print(0);
+        }
+    }
 
-        Subject[] subjects = new Subject[N+1];
+    public static String reverse(String str) {
+        sb = new StringBuilder(str);
+        sb.reverse();
+        return sb.toString();
+    }
 
-        for (int i = 1; i <= N; i++) {
-            st = new StringTokenizer(br.readLine());
-
-            int h = Integer.parseInt(st.nextToken());
-            int s = Integer.parseInt(st.nextToken());
-
-            subjects[i] = new Subject(h,s);
+    public static boolean solve(String S, String str) {
+        if (str.length() == S.length()) {
+            if (str.equals(S)) return true;
+            return false;
         }
 
-        int[][] dp = new int[N+1][T+1]; //정답은 dp[N][T]
-
-        for (int i = 1; i <= N; i++) {
-            for (int j = 1; j <= T; j++) {
-                if (j - subjects[i].hour < 0) {
-                    dp[i][j] = dp[i-1][j];
-                    continue;
-                }
-                dp[i][j] = Math.max(dp[i-1][j], dp[i-1][j - subjects[i].hour] + subjects[i].score);
+        if (str.charAt(str.length() - 1) == 'A') {
+            if (solve(S, str.substring(0, str.length() - 1))) {
+                return true;
             }
         }
 
-        System.out.print(dp[N][T]);
+        if (str.charAt(0) == 'B') {
+            if (solve(S, reverse(str).substring(0, str.length() - 1))) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
