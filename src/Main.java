@@ -9,45 +9,58 @@ public class Main {
     static StringBuilder sb = new StringBuilder();
     static StringTokenizer st;
 
-
-
+    static int result;
+    static boolean[] isVisited;
+    static int N;
+    static int M;
+    static List<Integer>[] list;
     public static void main(String[] args) throws Exception {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-        String S = br.readLine();
-        String T = br.readLine();
+        /**
+         * 각각 1명씩만 친구가 있으면 됨.
+         * 단, 모두가 연결되어 있어야 함.
+         */
 
-        if (solve(S, T)) {
-            System.out.print(1);
-        } else {
-            System.out.print(0);
+        st = new StringTokenizer(br.readLine());
+
+        N = Integer.parseInt(st.nextToken()); //사람의 수
+        M = Integer.parseInt(st.nextToken()); //친구 관계의 수
+
+        list = new ArrayList[N];
+        isVisited = new boolean[N];
+
+        for (int i = 0; i < N; i++) {
+            list[i] = new ArrayList<>();
         }
+
+        for (int i = 0; i < M; i++) {
+            st = new StringTokenizer(br.readLine());
+            int p1 = Integer.parseInt(st.nextToken());
+            int p2 = Integer.parseInt(st.nextToken());
+            list[p1].add(p2);
+            list[p2].add(p1);
+        }
+
+        for (int i = 0; i < N; i++) {
+            dfs(i, 0);
+        }
+
+        System.out.println(result);
     }
 
-    public static String reverse(String str) {
-        sb = new StringBuilder(str);
-        sb.reverse();
-        return sb.toString();
-    }
-
-    public static boolean solve(String S, String str) {
-        if (str.length() == S.length()) {
-            if (str.equals(S)) return true;
-            return false;
+    public static void dfs(int index, int depth) {
+        if (depth >= 4) {
+            result = 1;
+            return;
         }
 
-        if (str.charAt(str.length() - 1) == 'A') {
-            if (solve(S, str.substring(0, str.length() - 1))) {
-                return true;
+        for (int i : list[index]) {
+            if (!isVisited[i]) {
+                isVisited[i] = true;
+                dfs(i, depth + 1);
+                isVisited[i] = false;
             }
         }
-
-        if (str.charAt(0) == 'B') {
-            if (solve(S, reverse(str).substring(0, str.length() - 1))) {
-                return true;
-            }
-        }
-
-        return false;
     }
 }
