@@ -9,58 +9,69 @@ public class Main {
     static StringBuilder sb = new StringBuilder();
     static StringTokenizer st;
 
-    static int result;
-    static boolean[] isVisited;
+    static int R;
+    static int C;
     static int N;
-    static int M;
-    static List<Integer>[] list;
+    static char[][] table;
+    static int[][] isBoom;
+
+    static int[] dy = {1, -1, 0, 0};
+    static int[] dx = {0, 0, 1, -1};
+
     public static void main(String[] args) throws Exception {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-        /**
-         * 각각 1명씩만 친구가 있으면 됨.
-         * 단, 모두가 연결되어 있어야 함.
-         */
-
         st = new StringTokenizer(br.readLine());
+        R = Integer.parseInt(st.nextToken());
+        C = Integer.parseInt(st.nextToken());
+        N = Integer.parseInt(st.nextToken()); //N초가 지난 후의 격자판 상태
 
-        N = Integer.parseInt(st.nextToken()); //사람의 수
-        M = Integer.parseInt(st.nextToken()); //친구 관계의 수
+        table = new char[R][C];
+        isBoom = new int[R][C];
 
-        list = new ArrayList[N];
-        isVisited = new boolean[N];
-
-        for (int i = 0; i < N; i++) {
-            list[i] = new ArrayList<>();
-        }
-
-        for (int i = 0; i < M; i++) {
-            st = new StringTokenizer(br.readLine());
-            int p1 = Integer.parseInt(st.nextToken());
-            int p2 = Integer.parseInt(st.nextToken());
-            list[p1].add(p2);
-            list[p2].add(p1);
-        }
-
-        for (int i = 0; i < N; i++) {
-            dfs(i, 0);
-        }
-
-        System.out.println(result);
-    }
-
-    public static void dfs(int index, int depth) {
-        if (depth >= 4) {
-            result = 1;
-            return;
-        }
-
-        for (int i : list[index]) {
-            if (!isVisited[i]) {
-                isVisited[i] = true;
-                dfs(i, depth + 1);
-                isVisited[i] = false;
+        for (int i = 0; i < R; i++) {
+            String str = br.readLine();
+            for (int j = 0; j < C; j++) {
+                table[i][j] = str.charAt(j);
+                if (str.charAt(j) == 'O') {
+                    isBoom[i][j] = 3;
+                }
             }
+        }
+
+        int sec = 0;
+        while(sec++ < N) {
+            if (sec == 1) continue;
+
+            if (sec % 2 == 0) {
+                for (int i = 0; i < R; i++) {
+                    for (int j = 0; j < C; j++) {
+                        if (table[i][j] == '.') {
+                            isBoom[i][j] = sec + 3;
+                            table[i][j] = 'O';
+                        }
+                    }
+                }
+            }else if (sec % 2 != 0) {
+                for (int i = 0; i < R; i++) {
+                    for (int j = 0; j < C; j++) {
+                        if (isBoom[i][j] != sec) continue;
+                        table[i][j] = '.';
+                        for (int k = 0; k < 4; k++) {
+                            int ny = i + dy[k];
+                            int nx = j + dx[k];
+
+                            if (ny < 0 || nx < 0 || ny >= R || nx >= C) continue;
+
+                            table[ny][nx] = '.';
+                        }
+                    }
+                }
+            }
+        }
+
+        for (int i = 0; i < R; i++) {
+            System.out.println(table[i]);
         }
     }
 }
