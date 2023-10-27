@@ -3,24 +3,27 @@ import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.StringTokenizer;
 import java.util.*;
+import java.util.regex.Pattern;
 
 public class Main {
 
     static StringBuilder sb = new StringBuilder();
     static StringTokenizer st;
 
-    static final String REGEX = "^[A-F]?A+F+C+[A-F]?$";
     public static void main(String[] args) throws Exception {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
+        Pattern pattern = Pattern.compile("(100+1+|01)+");
+
         int N = Integer.parseInt(br.readLine());
 
-        for (int t = 0; t < N; t++) {
+        for (int i = 0; i < N; i++) {
             String str = br.readLine();
-            if (str.matches(REGEX)) {
-                System.out.println("Infected!");
+
+            if (pattern.matcher(str).matches()) {
+                System.out.println("YES");
             } else {
-                System.out.println("Good");
+                System.out.println("NO");
             }
         }
     }
