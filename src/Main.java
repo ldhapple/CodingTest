@@ -15,16 +15,12 @@ public class Main {
 
         Pattern pattern = Pattern.compile("(100+1+|01)+");
 
-        int N = Integer.parseInt(br.readLine());
+        String str = br.readLine();
 
-        for (int i = 0; i < N; i++) {
-            String str = br.readLine();
-
-            if (pattern.matcher(str).matches()) {
-                System.out.println("YES");
-            } else {
-                System.out.println("NO");
-            }
+        if (pattern.matcher(str).matches()) {
+            System.out.println("SUBMARINE");
+        } else {
+            System.out.println("NOISE");
         }
     }
 }
