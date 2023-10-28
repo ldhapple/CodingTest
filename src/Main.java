@@ -13,14 +13,21 @@ public class Main {
     public static void main(String[] args) throws Exception {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-        Pattern pattern = Pattern.compile("(100+1+|01)+");
+        int N = Integer.parseInt(br.readLine());
+        String pt = br.readLine();
+        int starIndex = pt.indexOf("*");
+        String start = pt.substring(0, starIndex);
+        String end = pt.substring(starIndex+1, pt.length());
+        Pattern pattern = Pattern.compile("^(" + start + ")+[a-z]*(" + end + ")+$");
 
-        String str = br.readLine();
+        for (int i = 0; i < N; i++) {
+            String str = br.readLine();
 
-        if (pattern.matcher(str).matches()) {
-            System.out.println("SUBMARINE");
-        } else {
-            System.out.println("NOISE");
+            if (pattern.matcher(str).matches()) {
+                System.out.println("DA");
+            } else {
+                System.out.println("NE");
+            }
         }
     }
 }
