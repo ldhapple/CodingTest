@@ -1,5 +1,6 @@
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.StringTokenizer;
 import java.util.*;
@@ -14,20 +15,22 @@ public class Main {
     public static void main(String[] args) throws Exception {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-        String str = br.readLine();
-        String regexStr = br.readLine();
+        List<BigInteger> numList = new ArrayList<>();
 
-        Pattern pattern = Pattern.compile(regexStr);
-        Matcher matcher = pattern.matcher(str);
+        Long N = Long.parseLong(br.readLine());
+        for (int i = 0; i < N; i++) {
+            String str = br.readLine();
 
-        int cnt = 0;
-//        System.out.print(matcher.find());
-//        System.out.print(matcher.find());
-//        System.out.print(matcher.find());
-        while(matcher.find()) {
-            cnt++;
+            String[] numbers = str.split("\\D");
+            for (String num : numbers) {
+                if (!num.equals("")) numList.add(new BigInteger(num));
+            }
         }
 
-        System.out.print(cnt);
+        Collections.sort(numList);
+
+        for (BigInteger i : numList) {
+            System.out.println(i);
+        }
     }
 }
