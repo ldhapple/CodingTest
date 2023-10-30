@@ -15,33 +15,62 @@ public class Main {
     public static void main(String[] args) throws Exception {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-        Pattern patternJava = Pattern.compile("^[a-z]+(([A-Z])([a-z]*))*$");
-        Pattern patternCpp = Pattern.compile("^[a-z]+(_[a-z]+)*$");
+        String firstRegex = ".*[aeiou]+.*"; //모음 하나를 반드시 포함하여야 한다.
 
-        String str = br.readLine();
+        while(true) {
+            String str = br.readLine();
+            boolean flag = true;
 
-        if (patternCpp.matcher(str).matches()) {
-            String[] alp = str.split("_");
-            String ans = alp[0];
-            for (int i = 1; i < alp.length; i++) {
-                ans += String.valueOf(alp[i].charAt(0)).toUpperCase();
-                ans += alp[i].substring(1, alp[i].length());
+            if (str.equals("end")) {
+                break;
             }
 
-            System.out.println(ans);
-        } else if (patternJava.matcher(str).matches()) {
-            String ans = "";
-            for (int i = 0; i < str.length(); i++) {
-                if (String.valueOf(str.charAt(i)).matches("[A-Z]")) {
-                    ans += "_";
-                    ans += String.valueOf(str.charAt(i)).toLowerCase();
-                } else {
-                    ans += str.charAt(i);
+            if (!str.matches(firstRegex)) {
+                flag = false;
+            }
+
+            int cnt = 1;
+            boolean isAeiou = isAeiouu(str.charAt(0));
+            for (int i = 1; i < str.length(); i++) {
+                char c = str.charAt(i);
+
+                if (isAeiouu(c)) {
+                    if (isAeiou) {
+                        cnt++;
+                    } else if (!isAeiou) {
+                        isAeiou = true;
+                        cnt = 1;
+                    }
+                } else if (!isAeiouu(c)){
+                    if (!isAeiou) {
+                        cnt++;
+                    } else if (isAeiou) {
+                        isAeiou = false;
+                        cnt = 1;
+                    }
+                }
+
+                if (cnt == 3) {
+                    flag = false;
+                }
+
+                if (c == str.charAt(i - 1)) { //연속으로 두 번 오면 안됨.
+                    String check = String.valueOf(c) + String.valueOf(str.charAt(i-1));
+                    if (!check.equals("ee") && !check.equals("oo")) {
+                        flag = false;
+                    }
                 }
             }
-            System.out.println(ans);
-        } else {
-            System.out.println("Error!");
+
+            if (flag) {
+                System.out.println("<" + str + "> " + "is acceptable.");
+            } else if (!flag) {
+                System.out.println("<" + str + "> " + "is not acceptable.");
+            }
         }
+    }
+
+    private static boolean isAeiouu(char c) {
+        return String.valueOf(c).matches("[aeiou]");
     }
 }
