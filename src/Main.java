@@ -15,62 +15,15 @@ public class Main {
     public static void main(String[] args) throws Exception {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-        String firstRegex = ".*[aeiou]+.*"; //모음 하나를 반드시 포함하여야 한다.
+        Pattern pattern = Pattern.compile("(w+o+l+f)+");
 
-        while(true) {
-            String str = br.readLine();
-            boolean flag = true;
+        String str = br.readLine();
 
-            if (str.equals("end")) {
-                break;
-            }
-
-            if (!str.matches(firstRegex)) {
-                flag = false;
-            }
-
-            int cnt = 1;
-            boolean isAeiou = isAeiouu(str.charAt(0));
-            for (int i = 1; i < str.length(); i++) {
-                char c = str.charAt(i);
-
-                if (isAeiouu(c)) {
-                    if (isAeiou) {
-                        cnt++;
-                    } else if (!isAeiou) {
-                        isAeiou = true;
-                        cnt = 1;
-                    }
-                } else if (!isAeiouu(c)){
-                    if (!isAeiou) {
-                        cnt++;
-                    } else if (isAeiou) {
-                        isAeiou = false;
-                        cnt = 1;
-                    }
-                }
-
-                if (cnt == 3) {
-                    flag = false;
-                }
-
-                if (c == str.charAt(i - 1)) { //연속으로 두 번 오면 안됨.
-                    String check = String.valueOf(c) + String.valueOf(str.charAt(i-1));
-                    if (!check.equals("ee") && !check.equals("oo")) {
-                        flag = false;
-                    }
-                }
-            }
-
-            if (flag) {
-                System.out.println("<" + str + "> " + "is acceptable.");
-            } else if (!flag) {
-                System.out.println("<" + str + "> " + "is not acceptable.");
-            }
+        if (pattern.matcher("wwolfolf").matches()) {
+            System.out.print(1);
+        } else {
+            System.out.print(0);
         }
-    }
 
-    private static boolean isAeiouu(char c) {
-        return String.valueOf(c).matches("[aeiou]");
     }
 }
