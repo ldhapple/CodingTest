@@ -1,64 +1,86 @@
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.math.BigInteger;
-import java.util.Arrays;
 import java.util.StringTokenizer;
 import java.util.*;
-import java.util.function.BiPredicate;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.function.UnaryOperator;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+
 
 public class Main {
 
     static StringBuilder sb = new StringBuilder();
     static StringTokenizer st;
 
-    public static class Food {
-        public int score;
-        public int kcal;
+    public static class Point {
+        public int y;
+        public int x;
 
-        public Food(int score, int kcal) {
-            this.score = score;
-            this.kcal = kcal;
+        public Point(int y, int x) {
+            this.y = y;
+            this.x = x;
+        }
+
+        public void setY(int y) {
+            this.y = y;
+        }
+
+        public void setX(int x) {
+            this.x = x;
         }
     }
 
     public static void main(String[] args) throws Exception {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-        int T = Integer.parseInt(br.readLine());
+//        int T = Integer.parseInt(br.readLine());
 
-        for (int test = 1; test <= T; test++) {
-            st = new StringTokenizer(br.readLine());
+        for (int test = 1; test <= 10; test++) {
+            int T = Integer.parseInt(br.readLine());
 
-            int N = Integer.parseInt(st.nextToken()); //재료 수
-            int L = Integer.parseInt(st.nextToken()); //제한 칼로리
+            int[][] ladder = new int[100][100];
 
-            Food[] foods = new Food[N+1];
-            int[][] dp = new int[N+1][L+1];
-
-            for (int i = 1; i <= N; i++) {
+            int startY = 99;
+            int startX = 0;
+            for (int i = 0; i < 100; i++) {
                 st = new StringTokenizer(br.readLine());
-                foods[i] = new Food(Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()));
-            }
+                for (int j = 0; j < 100; j++) {
+                    int value = Integer.parseInt(st.nextToken());
+                    ladder[i][j] = value;
 
-            for (int i = 1; i <= N; i++) {
-                for (int j = 1; j <= L; j++) {
-                    if (foods[i].kcal > j) {
-                        dp[i][j] = dp[i-1][j];
-                    } else {
-                        dp[i][j] = Math.max(dp[i-1][j], dp[i-1][j-foods[i].kcal] + foods[i].score);
+                    if (value == 2) {
+                        startX = j;
                     }
                 }
             }
 
-            System.out.printf("#%d %d\n", test, dp[N][L]);
+            Point start = new Point(startY, startX);
+
+            int[] dx = {-1,1};
+
+            while(true) {
+                if (start.y == 0) break;
+
+                boolean flag = false;
+                for (int i = 0; i < 2; i++) {
+                    int nx = start.x + dx[i];
+
+                    if (nx < 0 || nx >= 100) continue;
+                    if (ladder[start.y][nx] != 1) continue;
+                    if (flag) continue;
+
+                    start.setX(nx);
+                    flag = true;
+
+                    while(true) {
+                        nx = start.x + dx[i];
+
+                        if (nx < 0 || nx >= 100 || ladder[start.y][nx] != 1) break;
+
+                        start.setX(nx);
+                    }
+                }
+                start.setY(start.y - 1);
+            }
+
+            System.out.printf("#%d %d\n", test, start.x);
         }
     }
 }
