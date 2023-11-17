@@ -4,8 +4,15 @@ import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.StringTokenizer;
 import java.util.*;
+import java.util.function.BiPredicate;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.function.UnaryOperator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Main {
 
@@ -15,35 +22,43 @@ public class Main {
     public static void main(String[] args) throws Exception {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-        st = new StringTokenizer(br.readLine());
+        int T = Integer.parseInt(br.readLine());
 
-        int N = Integer.parseInt(st.nextToken()); //수열의 길이
-        int K = Integer.parseInt(st.nextToken()); //최대 존재할 수 있는 개수
+        for (int test = 0; test < T; test++) {
+            st = new StringTokenizer(br.readLine());
 
-        int[] count = new int[100001];
-        int[] arr = new int[N];
+            int N = Integer.parseInt(st.nextToken()); // N*N 크기의 배열
+            int M = Integer.parseInt(st.nextToken()); // M*M 사이즈의 크기 파리채
 
-        st = new StringTokenizer(br.readLine());
-        for (int i = 0; i < N; i++) {
-            arr[i] = Integer.parseInt(st.nextToken());
-        }
+            int[][] fly = new int[N][N];
 
-        int max = 0;
-        int start = 0;
-        int end = 0;
-
-        while (end < arr.length) {
-            while (end < arr.length && count[arr[end]] < K) {
-                count[arr[end]]++;
-                end++;
+            for (int i = 0; i < N; i++) {
+                st = new StringTokenizer(br.readLine());
+                for (int j = 0; j < N; j++) {
+                    fly[i][j] = Integer.parseInt(st.nextToken());
+                }
             }
 
-            int len = end - start;
-            max = Math.max(max, len);
-            count[arr[start]]--;
-            start++;
+            int answer = 0;
+
+            for (int i = 0; i < N - M + 1; i++) {
+                for (int j = 0; j < N - M + 1; j++) {
+                    answer = Math.max(answer, func(fly, i, j, M));
+                }
+            }
+
+            System.out.printf("#%d %d\n", test+1, answer);
+        }
+    }
+
+    private static int func(int[][] fly, int i, int j, int M) {
+        int total = 0;
+        for (int a = i; a < i + M; a++) {
+            for (int b = j; b < j + M; b++) {
+                total += fly[a][b];
+            }
         }
 
-        System.out.print(max);
+        return total;
     }
 }
