@@ -19,15 +19,13 @@ public class Main {
     static StringBuilder sb = new StringBuilder();
     static StringTokenizer st;
 
-    public static class Point {
-        public int y;
-        public int x;
-        public int sum;
+    public static class Food {
+        public int score;
+        public int kcal;
 
-        public Point(int y, int x, int sum) {
-            this.y = y;
-            this.x = x;
-            this.sum = sum;
+        public Food(int score, int kcal) {
+            this.score = score;
+            this.kcal = kcal;
         }
     }
 
@@ -37,47 +35,30 @@ public class Main {
         int T = Integer.parseInt(br.readLine());
 
         for (int test = 1; test <= T; test++) {
-            int N = Integer.parseInt(br.readLine());
+            st = new StringTokenizer(br.readLine());
 
-            int[][] table = new int[N][N];
-            int[][] dp = new int[N + 1][N + 1];
-            int[] dy = {1,-1,0,0};
-            int[] dx = {0,0,1,-1};
+            int N = Integer.parseInt(st.nextToken()); //재료 수
+            int L = Integer.parseInt(st.nextToken()); //제한 칼로리
 
-            for (int i = 0; i < N; i++) {
-                String numbers = br.readLine();
-                for (int j = 0; j < N; j++) {
-                    table[i][j] = numbers.charAt(j) - '0';
-                    dp[i][j] = Integer.MAX_VALUE;
-                }
+            Food[] foods = new Food[N+1];
+            int[][] dp = new int[N+1][L+1];
+
+            for (int i = 1; i <= N; i++) {
+                st = new StringTokenizer(br.readLine());
+                foods[i] = new Food(Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()));
             }
 
-            dp[0][0] = table[0][0];
-
-            PriorityQueue<Point> pq = new PriorityQueue<>((a,b) -> a.sum - b.sum);
-            pq.add(new Point(0,0,0));
-
-            while(!pq.isEmpty()) {
-                Point cur = pq.poll();
-
-                if (cur.sum > dp[cur.y][cur.x]) continue;
-
-                for (int i = 0; i < 4; i++) {
-                    int ny = cur.y + dy[i];
-                    int nx = cur.x + dx[i];
-
-                    if (ny < 0 || nx < 0 || nx >= N || ny >= N) continue;
-
-                    int nextSum = cur.sum + table[ny][nx];
-
-                    if (nextSum < dp[ny][nx]) {
-                        dp[ny][nx] = nextSum;
-                        pq.add(new Point(ny, nx, nextSum));
+            for (int i = 1; i <= N; i++) {
+                for (int j = 1; j <= L; j++) {
+                    if (foods[i].kcal > j) {
+                        dp[i][j] = dp[i-1][j];
+                    } else {
+                        dp[i][j] = Math.max(dp[i-1][j], dp[i-1][j-foods[i].kcal] + foods[i].score);
                     }
                 }
             }
 
-            System.out.printf("#%d %d\n", test, dp[N-1][N-1]);
+            System.out.printf("#%d %d\n", test, dp[N][L]);
         }
     }
 }
