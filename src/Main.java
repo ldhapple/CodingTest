@@ -19,6 +19,18 @@ public class Main {
     static StringBuilder sb = new StringBuilder();
     static StringTokenizer st;
 
+    public static class Point {
+        public int y;
+        public int x;
+        public int sum;
+
+        public Point(int y, int x, int sum) {
+            this.y = y;
+            this.x = x;
+            this.sum = sum;
+        }
+    }
+
     public static void main(String[] args) throws Exception {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
@@ -27,43 +39,45 @@ public class Main {
         for (int test = 1; test <= T; test++) {
             int N = Integer.parseInt(br.readLine());
 
-            int[] stockPrices = new int[N];
+            int[][] table = new int[N][N];
+            int[][] dp = new int[N + 1][N + 1];
+            int[] dy = {1,-1,0,0};
+            int[] dx = {0,0,1,-1};
 
-            st = new StringTokenizer(br.readLine());
             for (int i = 0; i < N; i++) {
-                stockPrices[i] = Integer.parseInt(st.nextToken());
-            }
-
-            int start = N-1;
-            int end = N-1;
-
-            long totalProfit = 0;
-
-            while (end > -1) {
-                int buyPrice = stockPrices[end];
-                int sellPrice = stockPrices[start];
-
-                if (buyPrice > sellPrice) {
-                    for (int i = start; i > end; i--) {
-                        totalProfit += sellPrice - stockPrices[i];
-                    }
-                    start = end;
+                String numbers = br.readLine();
+                for (int j = 0; j < N; j++) {
+                    table[i][j] = numbers.charAt(j) - '0';
+                    dp[i][j] = Integer.MAX_VALUE;
                 }
+            }
 
-                if (end == 0) {
-                    for (int i = start; i >= end; i--) {
-                        totalProfit += sellPrice - stockPrices[i];
+            dp[0][0] = table[0][0];
+
+            PriorityQueue<Point> pq = new PriorityQueue<>((a,b) -> a.sum - b.sum);
+            pq.add(new Point(0,0,0));
+
+            while(!pq.isEmpty()) {
+                Point cur = pq.poll();
+
+                if (cur.sum > dp[cur.y][cur.x]) continue;
+
+                for (int i = 0; i < 4; i++) {
+                    int ny = cur.y + dy[i];
+                    int nx = cur.x + dx[i];
+
+                    if (ny < 0 || nx < 0 || nx >= N || ny >= N) continue;
+
+                    int nextSum = cur.sum + table[ny][nx];
+
+                    if (nextSum < dp[ny][nx]) {
+                        dp[ny][nx] = nextSum;
+                        pq.add(new Point(ny, nx, nextSum));
                     }
                 }
-
-                end--;
             }
 
-            if (totalProfit < 0) {
-                totalProfit = 0;
-            }
-
-            System.out.printf("#%d %d\n", test, totalProfit);
+            System.out.printf("#%d %d\n", test, dp[N-1][N-1]);
         }
     }
 }
