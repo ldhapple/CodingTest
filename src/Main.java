@@ -24,41 +24,46 @@ public class Main {
 
         int T = Integer.parseInt(br.readLine());
 
-        for (int test = 0; test < T; test++) {
+        for (int test = 1; test <= T; test++) {
+            int N = Integer.parseInt(br.readLine());
+
+            int[] stockPrices = new int[N];
+
             st = new StringTokenizer(br.readLine());
-
-            int N = Integer.parseInt(st.nextToken()); // N*N 크기의 배열
-            int M = Integer.parseInt(st.nextToken()); // M*M 사이즈의 크기 파리채
-
-            int[][] fly = new int[N][N];
-
             for (int i = 0; i < N; i++) {
-                st = new StringTokenizer(br.readLine());
-                for (int j = 0; j < N; j++) {
-                    fly[i][j] = Integer.parseInt(st.nextToken());
+                stockPrices[i] = Integer.parseInt(st.nextToken());
+            }
+
+            int start = N-1;
+            int end = N-1;
+
+            long totalProfit = 0;
+
+            while (end > -1) {
+                int buyPrice = stockPrices[end];
+                int sellPrice = stockPrices[start];
+
+                if (buyPrice > sellPrice) {
+                    for (int i = start; i > end; i--) {
+                        totalProfit += sellPrice - stockPrices[i];
+                    }
+                    start = end;
                 }
-            }
 
-            int answer = 0;
-
-            for (int i = 0; i < N - M + 1; i++) {
-                for (int j = 0; j < N - M + 1; j++) {
-                    answer = Math.max(answer, func(fly, i, j, M));
+                if (end == 0) {
+                    for (int i = start; i >= end; i--) {
+                        totalProfit += sellPrice - stockPrices[i];
+                    }
                 }
+
+                end--;
             }
 
-            System.out.printf("#%d %d\n", test+1, answer);
-        }
-    }
-
-    private static int func(int[][] fly, int i, int j, int M) {
-        int total = 0;
-        for (int a = i; a < i + M; a++) {
-            for (int b = j; b < j + M; b++) {
-                total += fly[a][b];
+            if (totalProfit < 0) {
+                totalProfit = 0;
             }
-        }
 
-        return total;
+            System.out.printf("#%d %d\n", test, totalProfit);
+        }
     }
 }
