@@ -12,49 +12,31 @@ public class Main {
     public static void main(String[] args) throws Exception {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-        st = new StringTokenizer(br.readLine());
+        int N = Integer.parseInt(br.readLine()); //퇴사까지 남은 날짜
 
-        int N = Integer.parseInt(st.nextToken()); // 돌의 개수
-        int K = Integer.parseInt(st.nextToken()); // 쓸 수 있는 최대 힘
+        int[][] arr = new int[2][N + 2];
+        int[] dp = new int[N + 2];
 
-        int[] bridge = new int[N + 1];
-        int[] dp = new int[N + 1];
-        Arrays.fill(dp, 1001);
-
-        st = new StringTokenizer(br.readLine());
-        for (int i = 1; i <= N; i++) {
-            bridge[i] = Integer.parseInt(st.nextToken());
-        }
-
-        dp[0] = 0;
-        dp[1] = 0;
-        for (int i = 2; i <= N; i++) {
-            boolean flag = false;
-            for (int j = 1; j < i; j++) {
-                int power = getPower(j, i, bridge);
-
-                if (power <= K && dp[j] != -1) {
-                    flag = true;
-                    dp[i] = Math.min(dp[i], dp[j] + power);
-                }
-            }
-            if (!flag) {
-                dp[i] = -1;
+        for (int j = 1; j < N + 1; j++) {
+            st = new StringTokenizer(br.readLine());
+            for (int i = 0; i < 2; i++) {
+                arr[i][j] = Integer.parseInt(st.nextToken());
             }
         }
 
-        for (int i : dp) {
-            System.out.println(i);
+        int max = 0;
+        for (int i = 1; i <= N + 1; i++) {
+
+//            max = Math.max(max, dp[i]);
+
+            int next = i + arr[0][i];
+
+            if (next < N + 2) {
+                dp[next] = Math.max(dp[next], dp[i] + arr[1][i]);
+                System.out.println("next=" + next + " " + dp[next]);
+            }
         }
 
-        if (dp[N] != -1) {
-            System.out.println("YES");
-        } else {
-            System.out.println("NO");
-        }
-    }
-
-    private static int getPower(int i, int j, int[] bridge) {
-        return (j-i) * (1 + Math.abs(bridge[i] - bridge[j]));
+        System.out.println(dp[N+1]);
     }
 }
