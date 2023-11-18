@@ -6,37 +6,37 @@ import java.util.*;
 
 public class Main {
 
+    public static class City {
+        public int cost;
+        public int customer;
+
+        public City(int cost, int customer) {
+            this.cost = cost;
+            this.customer = customer;
+        }
+    }
+
     static StringBuilder sb = new StringBuilder();
     static StringTokenizer st;
 
     public static void main(String[] args) throws Exception {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-        int N = Integer.parseInt(br.readLine()); //퇴사까지 남은 날짜
+        st = new StringTokenizer(br.readLine());
 
-        int[][] arr = new int[2][N + 2];
-        int[] dp = new int[N + 2];
+        int n = Integer.parseInt(st.nextToken()); //동전 종류
+        int k = Integer.parseInt(st.nextToken()); //합이 k
 
-        for (int j = 1; j < N + 1; j++) {
-            st = new StringTokenizer(br.readLine());
-            for (int i = 0; i < 2; i++) {
-                arr[i][j] = Integer.parseInt(st.nextToken());
+        int[] dp = new int[k+1];
+        dp[0] = 1;
+
+        for (int i = 0; i < n; i++) {
+            int money = Integer.parseInt(br.readLine());
+            for (int j = money; j < k + 1; j++) {
+                dp[j] += dp[j - money];
             }
         }
 
-        int max = 0;
-        for (int i = 1; i <= N + 1; i++) {
-
-//            max = Math.max(max, dp[i]);
-
-            int next = i + arr[0][i];
-
-            if (next < N + 2) {
-                dp[next] = Math.max(dp[next], dp[i] + arr[1][i]);
-                System.out.println("next=" + next + " " + dp[next]);
-            }
-        }
-
-        System.out.println(dp[N+1]);
+        System.out.println(dp[k]);
     }
 }
