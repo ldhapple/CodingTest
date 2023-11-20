@@ -6,37 +6,43 @@ import java.util.*;
 
 public class Main {
 
-    public static class City {
-        public int cost;
-        public int customer;
-
-        public City(int cost, int customer) {
-            this.cost = cost;
-            this.customer = customer;
-        }
-    }
-
     static StringBuilder sb = new StringBuilder();
     static StringTokenizer st;
 
     public static void main(String[] args) throws Exception {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
+        int N = Integer.parseInt(br.readLine()); // 탑의 수
+
+        Stack<int[]> stack = new Stack<>();
+
         st = new StringTokenizer(br.readLine());
+        for (int i = 0; i < N; i++) {
+            int height = Integer.parseInt(st.nextToken());
 
-        int n = Integer.parseInt(st.nextToken()); //동전 종류
-        int k = Integer.parseInt(st.nextToken()); //합이 k
+            if (stack.isEmpty()) {
+                sb.append("0").append(" ");
+                stack.add(new int[]{i, height});
+            } else {
+                while (true) {
+                    if (stack.isEmpty()) {
+                        sb.append("0").append(" ");
+                        stack.add(new int[]{i, height});
+                        break;
+                    }
 
-        int[] dp = new int[k+1];
-        dp[0] = 1;
+                    int[] top = stack.peek();
 
-        for (int i = 0; i < n; i++) {
-            int money = Integer.parseInt(br.readLine());
-            for (int j = money; j < k + 1; j++) {
-                dp[j] += dp[j - money];
+                    if (top[1] > height) {
+                        sb.append(top[0] + 1).append(" ");
+                        stack.add(new int[]{i, height});
+                        break;
+                    } else {
+                        stack.pop();
+                    }
+                }
             }
         }
-
-        System.out.println(dp[k]);
+        System.out.print(sb);
     }
 }
