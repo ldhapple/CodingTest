@@ -9,40 +9,55 @@ public class Main {
     static StringBuilder sb = new StringBuilder();
     static StringTokenizer st;
 
+    static Deque<Integer> deque;
+
     public static void main(String[] args) throws Exception {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-        int N = Integer.parseInt(br.readLine()); // 탑의 수
+        int N = Integer.parseInt(br.readLine());
 
-        Stack<int[]> stack = new Stack<>();
+        deque = new LinkedList<>();
 
         st = new StringTokenizer(br.readLine());
+        ArrayList<Integer> list = new ArrayList<>();
         for (int i = 0; i < N; i++) {
-            int height = Integer.parseInt(st.nextToken());
+            int order = Integer.parseInt(st.nextToken());
+            list.add(order);
+        }
 
-            if (stack.isEmpty()) {
-                sb.append("0").append(" ");
-                stack.add(new int[]{i, height});
-            } else {
-                while (true) {
-                    if (stack.isEmpty()) {
-                        sb.append("0").append(" ");
-                        stack.add(new int[]{i, height});
-                        break;
-                    }
+        Collections.reverse(list);
 
-                    int[] top = stack.peek();
-
-                    if (top[1] > height) {
-                        sb.append(top[0] + 1).append(" ");
-                        stack.add(new int[]{i, height});
-                        break;
-                    } else {
-                        stack.pop();
-                    }
-                }
+        for (int i = 0; i < list.size(); i++) {
+            switch (list.get(i)) {
+                case 1:
+                    one(i);
+                    break;
+                case 2:
+                    two(i);
+                    break;
+                case 3:
+                    three(i);
+                    break;
             }
         }
+
+        while (!deque.isEmpty()) {
+            sb.append(deque.pollLast()).append(" ");
+        }
         System.out.print(sb);
+    }
+
+    private static void one(int i) {
+        deque.offerLast(i+1);
+    }
+
+    private static void two(int i) {
+        int temp = deque.pollLast();
+        deque.offerLast(i+1);
+        deque.offerLast(temp);
+    }
+
+    private static void three(int i) {
+        deque.offerFirst(i+1);
     }
 }
