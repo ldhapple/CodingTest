@@ -9,55 +9,42 @@ public class Main {
     static StringBuilder sb = new StringBuilder();
     static StringTokenizer st;
 
-    static Deque<Integer> deque;
+
 
     public static void main(String[] args) throws Exception {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-        int N = Integer.parseInt(br.readLine());
+        int T = Integer.parseInt(br.readLine());
 
-        deque = new LinkedList<>();
+        for (int test = 0; test < T; test++) {
+            TreeMap<Integer, Integer> map = new TreeMap<>();
+            int N = Integer.parseInt(br.readLine());
 
-        st = new StringTokenizer(br.readLine());
-        ArrayList<Integer> list = new ArrayList<>();
-        for (int i = 0; i < N; i++) {
-            int order = Integer.parseInt(st.nextToken());
-            list.add(order);
-        }
+            for (int i = 0; i < N; i++) {
+                st = new StringTokenizer(br.readLine());
 
-        Collections.reverse(list);
+                String order = st.nextToken();
+                int num = Integer.parseInt(st.nextToken());
 
-        for (int i = 0; i < list.size(); i++) {
-            switch (list.get(i)) {
-                case 1:
-                    one(i);
-                    break;
-                case 2:
-                    two(i);
-                    break;
-                case 3:
-                    three(i);
-                    break;
+                switch (order) {
+                    case "I":
+                        map.put(num, map.getOrDefault(num, 0) + 1);
+                        break;
+
+                    case "D":
+                        if (map.isEmpty()) continue;
+                        int key = (num == -1) ? map.firstKey() : map.lastKey();
+
+                        if (map.get(key) > 0) map.put(key, map.get(key) - 1);
+                        if (map.get(key) == 0) map.remove(key);
+                        break;
+                }
+            }
+            if (map.isEmpty()) {
+                System.out.println("EMPTY");
+            } else {
+                System.out.println(map.lastKey() + " " + map.firstKey());
             }
         }
-
-        while (!deque.isEmpty()) {
-            sb.append(deque.pollLast()).append(" ");
-        }
-        System.out.print(sb);
-    }
-
-    private static void one(int i) {
-        deque.offerLast(i+1);
-    }
-
-    private static void two(int i) {
-        int temp = deque.pollLast();
-        deque.offerLast(i+1);
-        deque.offerLast(temp);
-    }
-
-    private static void three(int i) {
-        deque.offerFirst(i+1);
     }
 }
