@@ -14,29 +14,19 @@ public class Main {
 
         int N = Integer.parseInt(br.readLine());
 
-        int[][] table = new int[N][N];
+        int[] dp = new int[N+1];
+        dp[1] = 1;
 
-        for (int i = 0; i < N; i++) {
-            st = new StringTokenizer(br.readLine());
-            for (int j = 0; j < N; j++) {
-                table[i][j] = Integer.parseInt(st.nextToken());
+        int min = 0;
+        for (int i = 2; i <= N; i++) {
+            min = Integer.MIN_VALUE;
+
+            for (int j = 0; j * j <= i; j++) {
+                int temp = i - (j * j);
+                min = Math.min(min, dp[temp]);
             }
+
+            dp[i] = min + 1;
         }
-
-        long[][] dp = new long[N][N];
-        dp[0][0] = 1;
-
-        for (int i = 0; i < N; i++) {
-            for (int j = 0; j < N; j++) {
-                int next = table[i][j];
-
-                if (next == 0) break;
-
-                if (i + next < N) dp[i+next][j] += dp[i][j];
-                if (j + next < N) dp[i][j+next] += dp[i][j];
-            }
-        }
-
-        System.out.println(dp[N-1][N-1]);
     }
 }
