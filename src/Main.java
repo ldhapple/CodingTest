@@ -28,5 +28,6 @@ public class Main {
 
             dp[i] = min + 1;
         }
+        System.out.println(dp[N-1]);
     }
 }
