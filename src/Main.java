@@ -15,22 +15,11 @@ public class Main {
         int N = Integer.parseInt(br.readLine());
 
         int[] dp = new int[N+1];
-        dp[1] = 0;
+        dp[1] = 1;
+        dp[2] = 2;
 
-        for (int i = 2; i <= N; i++) {
-            int min = Integer.MAX_VALUE;
-
-            if (i % 3 == 0) {
-                min = Math.min(min, dp[i/3]);
-            }
-
-            if (i % 2 == 0) {
-                min = Math.min(min, dp[i/2]);
-            }
-
-            min = Math.min(min, dp[i-1]);
-
-            dp[i] = min + 1;
+        for (int i = 3; i <= N; i++) {
+            dp[i] = (dp[i-1] + dp[i-2]) % 10007;
         }
 
         System.out.println(dp[N]);
