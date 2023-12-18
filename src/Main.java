@@ -9,19 +9,38 @@ public class Main {
     static StringBuilder sb = new StringBuilder();
     static StringTokenizer st;
 
+    static int[] arr;
+    static Integer[] dp;
+
     public static void main(String[] args) throws Exception {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
         int N = Integer.parseInt(br.readLine());
 
-        int[] dp = new int[1001];
-        dp[1] = 1;
-        dp[2] = 3;
+        arr = new int[N+1];
 
-        for (int i = 3; i <= N; i++) {
-            dp[i] = (dp[i-1] + 2 * dp[i-2]) % 10007;
+        for (int i = 1; i <= N; i++) {
+            int num = Integer.parseInt(br.readLine());
+
+            arr[i] = num;
         }
 
-        System.out.println(dp[N]);
+        dp = new Integer[N+1];
+        dp[0] = 0;
+        dp[1] = arr[1];
+
+        if (N > 1) {
+            dp[2] = arr[1] + arr[2];
+        }
+
+        System.out.println(solve(N));
+    }
+
+    public static int solve(int N) {
+        if (dp[N] == null) {
+            dp[N] = Math.max(solve(N-3) + arr[N-1] + arr[N], solve(N-2) + arr[N]);
+        }
+
+        return dp[N];
     }
 }
